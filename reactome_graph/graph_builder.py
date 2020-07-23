@@ -10,7 +10,8 @@ class GraphBuilder(object):
     """
     Reactome bipartite directed multigraph builder.
 
-    Builds a graph for every species specified in the constructor.
+    Builds a `networkx.MultiDiGraph` for every species
+    specified in the constructor.
 
     Parameters
     ----------
@@ -120,7 +121,6 @@ class GraphBuilder(object):
     def build(self) -> Dict[str, nx.MultiDiGraph]:
         """
         Build `networkx.MultiDiGraph` for all species specified in constructor.
-        Built graphs will also be stored in the species' data folder.
 
         Returns
         -------
