@@ -1,6 +1,6 @@
 import pickle
 from pathlib import Path
-from reactome_graph.analysis import GraphAnalyzer
+from reactome_graph import GraphAnalyzer
 
 DATA_DIR = './data/species'
 SPECIES = 'HSA'

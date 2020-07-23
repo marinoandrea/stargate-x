@@ -1,12 +1,9 @@
 import networkx as nx
 import multiprocessing as mp
 import neo4j
+from reactome_graph import ENTITY, EVENT, EDGES_QUERY, PATHWAYS_QUERY
 from reactome_graph.utils.neo4j import Neo4jClient
 from typing import Sequence, Dict
-
-
-EDGES_QUERY = 'reactome_graph/queries/edges.cypher'
-PATHWAY_QUERY = 'reactome_graph/queries/pathways.cypher'
 
 
 class GraphBuilder(object):
@@ -34,7 +31,7 @@ class GraphBuilder(object):
             self.species = species
 
     def _load_queries(self):
-        with open(EDGES_QUERY, 'r') as f1, open(PATHWAY_QUERY, 'r') as f2:
+        with open(EDGES_QUERY, 'r') as f1, open(PATHWAYS_QUERY, 'r') as f2:
             self._query_edges = f1.read()
             self._query_pathways = f2.read()
 
@@ -76,8 +73,8 @@ class GraphBuilder(object):
                 target = t
 
             # bipartite networkx convention
-            source['bipartite'] = 1 if 'Event' in source['labels'] else 0
-            target['bipartite'] = 1 if 'Event' in target['labels'] else 0
+            source['bipartite'] = EVENT if 'Event' in source['labels'] else ENTITY  # noqa: E501
+            target['bipartite'] = EVENT if 'Event' in target['labels'] else ENTITY  # noqa: E501
 
             nodes[source['stId']] = source
             nodes[target['stId']] = target

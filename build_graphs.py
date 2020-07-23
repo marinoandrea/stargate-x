@@ -1,6 +1,6 @@
 import pickle
 from pathlib import Path
-from reactome_graph.graph_builder import GraphBuilder
+from reactome_graph import GraphBuilder
 
 
 DATA_DIR = './data/species'
