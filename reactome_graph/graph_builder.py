@@ -43,11 +43,11 @@ class GraphBuilder(object):
         self.species = [str(s['code']) for s in result]
         client.close()
 
-    def _parse_records(self, edges: neo4j.Result,
-                       pathways: neo4j.Result) -> nx.MultiDiGraph:
+    def _parse_records(self, records_edges: neo4j.Result,
+                       records_pathways: neo4j.Result) -> nx.MultiDiGraph:
 
         nodes, edges = {}, []
-        for record in edges:
+        for record in records_edges:
             try:
                 source = dict(record['source'])
                 target = dict(record['target'])
@@ -81,7 +81,7 @@ class GraphBuilder(object):
             nodes[target['stId']] = target
             edges.append((source['stId'], target['stId'], rel_data))
 
-        for record in pathways:
+        for record in records_pathways:
             reaction, pathway = record['reaction'], record['pathway']
             if reaction not in nodes:
                 continue
