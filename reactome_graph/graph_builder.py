@@ -94,7 +94,7 @@ class GraphBuilder(object):
             source, target, rel_data = edge
             graph.add_node(source, **nodes[source])
             graph.add_node(target, **nodes[target])
-            graph.add_edge(source, target, key=rel_data['type'], **rel_data)
+            graph.add_edge(source, target, **rel_data)
         return graph
 
     def _extract_species(self, s: str) -> nx.MultiDiGraph:
