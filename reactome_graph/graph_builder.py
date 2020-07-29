@@ -83,11 +83,13 @@ class GraphBuilder(object):
 
         for record in records_pathways:
             reaction, pathway = record['reaction'], record['pathway']
+            level = int(record['level'])
             if reaction not in nodes:
                 continue
             if 'pathways' not in nodes[reaction]:
                 nodes[reaction]['pathways'] = []
-            nodes[reaction]['pathways'].append(pathway)
+            nodes[reaction]['pathways'].append(
+                {'stId': pathway, 'level': level})
 
         graph = nx.MultiDiGraph()
         for edge in edges:
@@ -107,6 +109,7 @@ class GraphBuilder(object):
         result_pathways = client.make_query(query_pathways)
 
         graph = self._parse_records(result_edges, result_pathways)
+        nx.freeze(graph)
 
         client.close()
         return s, graph
