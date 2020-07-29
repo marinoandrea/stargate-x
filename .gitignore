@@ -2,3 +2,5 @@
 data
 .vscode
 
+# scripts
+t.py
