@@ -1,8 +1,5 @@
 #!/usr/bin/sh
 
-# ensure venv is running
-pipenv shell
-
 ARGS0=("$@")
 ARGS1=("${ARGS[@]:1}")
 
