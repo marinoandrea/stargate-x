@@ -117,7 +117,7 @@ def _analyze_connectivity(graph: nx.MultiDiGraph, s: str):
     out_dir = f'{DATA_DIR}/{s}/analysis/connectivity'
     Path(out_dir).mkdir(parents=True, exist_ok=True)
     for measure in results:
-        with open(f'{out_dir}/measure.json', 'w') as f:
+        with open(f'{out_dir}/{measure}.json', 'w') as f:
             json.dump(results[measure], f)
 
 
