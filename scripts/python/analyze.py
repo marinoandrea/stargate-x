@@ -4,7 +4,8 @@ import argparse as ap
 import multiprocessing as mp
 import networkx as nx
 from pathlib import Path
-from reactome_graph import CentralityAnalyzer, ConnectivityAnalyzer
+from reactome_graph import (
+    CentralityAnalyzer, ConnectivityAnalyzer, ReactomeGraph)
 from typing import Callable, Dict, Union
 from functools import partial
 
@@ -16,7 +17,7 @@ def _worker(name: str, task: Callable, results: dict):
     results[name] = task()
 
 
-def _analyze_stats(graph: nx.MultiDiGraph, s: str):
+def _analyze_stats(graph: ReactomeGraph, s: str):
     # count node classes
     classes = {}
     for node in graph.nodes:
@@ -65,7 +66,7 @@ def _store_centrality_measures(name: str, s: str,
             f.write(f'{node}\t{value}\n')
 
 
-def _analyze_centrality(graph: nx.MultiDiGraph, s: str):
+def _analyze_centrality(graph: ReactomeGraph, s: str):
 
     analyzer = CentralityAnalyzer(graph)
     tasks = {
@@ -93,7 +94,7 @@ def _analyze_centrality(graph: nx.MultiDiGraph, s: str):
         _store_centrality_measures(measure, s, results[measure])
 
 
-def _analyze_connectivity(graph: nx.MultiDiGraph, s: str):
+def _analyze_connectivity(graph: ReactomeGraph, s: str):
 
     analyzer = ConnectivityAnalyzer(graph)
     tasks = {
