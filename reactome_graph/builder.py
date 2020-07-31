@@ -1,29 +1,30 @@
 import networkx as nx
 import multiprocessing as mp
 import neo4j
-from reactome_graph import ENTITY, EVENT, EDGES_QUERY, PATHWAYS_QUERY
+from reactome_graph import (
+    ENTITY, EVENT, EDGES_QUERY, PATHWAYS_QUERY, ReactomeGraph)
 from reactome_graph.utils.neo4j import Neo4jClient
-from typing import Sequence, Dict
+from typing import Sequence, Dict, Tuple
 
 
 class GraphBuilder(object):
-    """
-    Reactome bipartite directed multigraph builder.
-
-    Builds a `networkx.MultiDiGraph` for every species
-    specified in the constructor.
-
-    Parameters
-    ----------
-    species: list
-        Sequence of species to extract from the Reactome database.
-
-    relationships: list
-        Sequence of relationships to extract from the Reactome database.
-    """
 
     def __init__(self, species: Sequence[str] = None,
                  relationships: Sequence[str] = None):
+        """
+        Reactome bipartite directed multigraph builder.
+
+        Builds a `ReactomeGraph` for every species
+        specified in the constructor.
+
+        Parameters
+        ----------
+        species: Sequence[str]
+            Sequence of species to extract from the Reactome database.
+
+        relationships: Sequence[str]
+            Sequence of relationships to extract from the Reactome database.
+        """
         self._load_queries()
         self.relationships = relationships
         if species is None:
@@ -44,7 +45,7 @@ class GraphBuilder(object):
         client.close()
 
     def _parse_records(self, records_edges: neo4j.Result,
-                       records_pathways: neo4j.Result) -> nx.MultiDiGraph:
+                       records_pathways: neo4j.Result) -> ReactomeGraph:
 
         nodes, edges = {}, []
         for record in records_edges:
@@ -91,7 +92,7 @@ class GraphBuilder(object):
             nodes[reaction]['pathways'].append(
                 {'stId': pathway, 'level': level})
 
-        graph = nx.MultiDiGraph()
+        graph = ReactomeGraph()
         for edge in edges:
             source, target, rel_data = edge
             graph.add_node(source, **nodes[source])
@@ -99,7 +100,7 @@ class GraphBuilder(object):
             graph.add_edge(source, target, **rel_data)
         return graph
 
-    def _extract_species(self, s: str) -> nx.MultiDiGraph:
+    def _extract_species(self, s: str) -> Tuple[str, ReactomeGraph]:
         client = Neo4jClient()
 
         query_edges = self._query_edges.replace('$species', s)
@@ -121,9 +122,9 @@ class GraphBuilder(object):
         pool.join()
         return out
 
-    def build(self) -> Dict[str, nx.MultiDiGraph]:
+    def build(self) -> Dict[str, ReactomeGraph]:
         """
-        Build `networkx.MultiDiGraph` for all species specified in constructor.
+        Build `ReactomeGraph` for all species specified in constructor.
 
         Returns
         -------

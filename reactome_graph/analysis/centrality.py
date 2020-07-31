@@ -13,41 +13,41 @@ class CentralityAnalyzer(GraphAnalyzer):
 
     def calculate_laplacian(self) -> Dict[str, float]:
         out = {}
-        for n in self._graph.nodes:
-            d = self._graph.out_degree(n)
-            value = d * d + d + 2 * sum(self._graph.out_degree(adj)
-                                        for adj in self._graph[n])
+        for n in self.graph.nodes:
+            d = self.graph.out_degree(n)
+            value = d * d + d + 2 * sum(self.graph.out_degree(adj)
+                                        for adj in self.graph[n])
             out[n] = value
         return out
 
     def calculate_closeness(self) -> Dict[str, float]:
         return nx.bipartite.closeness_centrality(
-            self._graph, self.event_nodes, normalized=True)
+            self.graph, self.graph.event_nodes, normalized=True)
 
     def calculate_degree(self) -> Dict[str, float]:
-        return nx.bipartite.degree_centrality(self._graph, self.event_nodes)
+        return nx.bipartite.degree_centrality(self.graph, self.event_nodes)
 
     def calculate_leverage(self) -> Dict[str, float]:
         out = {}
-        degrees = self._graph.out_degree(self._graph.nodes)
-        for n in self._graph.nodes:
+        degrees = self.graph.out_degree(self.graph.nodes)
+        for n in self.graph.nodes:
             d = degrees[n]
             if d == 0:
                 value = 0
                 continue
             value = sum((d - degrees[adj])/(d + degrees[adj])
-                        for adj in self._graph[n]) / d
+                        for adj in self.graph[n]) / d
             out[n] = value
         return out
 
     def calculate_h_index(self) -> Dict[str, float]:
         out = {}
-        degrees = self._graph.out_degree(self._graph.nodes)
-        for n in self._graph.nodes:
+        degrees = self.graph.out_degree(self.graph.nodes)
+        for n in self.graph.nodes:
             d = degrees[n]
             value = 0
             for h in range(1, d + 1):
-                adjs_h = [adj for adj in self._graph[n] if degrees[adj] > h]
+                adjs_h = [adj for adj in self.graph[n] if degrees[adj] > h]
                 h_value = min(len(adjs_h), h)
                 value = max(value, h_value)
             out[n] = value
@@ -57,7 +57,7 @@ class CentralityAnalyzer(GraphAnalyzer):
         out = {}
         A = self.adjacency_matrix
         e_A = sp.linalg.expm(A)
-        for i, n in enumerate(self._graph.nodes):
+        for i, n in enumerate(self.graph.nodes):
             out[n] = e_A[i][i]
         return out
 
