@@ -8,7 +8,7 @@ class Neo4jClient(object):
         self.connection = neo4j.GraphDatabase.driver(uri)
 
     @cached
-    def make_query(self, query, **params) -> neo4j.Result:
+    def make_query(self, query: str, **params) -> neo4j.Result:
         with self.connection.session() as sess:
             return [*sess.run(query, **params)]
 
