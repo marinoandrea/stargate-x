@@ -25,7 +25,8 @@ class CentralityAnalyzer(GraphAnalyzer):
             self.graph, self.graph.event_nodes, normalized=True)
 
     def calculate_degree(self) -> Dict[str, float]:
-        return nx.bipartite.degree_centrality(self.graph, self.event_nodes)
+        return nx.bipartite.degree_centrality(self.graph,
+                                              self.graph.event_nodes)
 
     def calculate_leverage(self) -> Dict[str, float]:
         out = {}

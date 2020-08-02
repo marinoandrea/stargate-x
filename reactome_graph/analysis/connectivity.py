@@ -16,11 +16,11 @@ class ConnectivityAnalyzer(GraphAnalyzer):
                for i, cc in enumerate(ccs)}
 
         out = {}
-        for p in self.pathways:
+        for p in self.graph.pathways:
             out[p] = {}
             for cc in ccs:
-                perc = (len(self.pathways[p] & ccs[cc])
-                        / len(self.pathways[p]))
+                perc = (len(self.graph.pathways[p]['nodes'] & ccs[cc])
+                        / len(self.graph.pathways[p]['nodes']))
                 if perc > 0:
                     out[p][cc] = perc
 
