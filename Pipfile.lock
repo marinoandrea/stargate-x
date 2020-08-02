@@ -18,10 +18,10 @@
     "default": {
         "autopep8": {
             "hashes": [
-                "sha256:60fd8c4341bab59963dafd5d2a566e94f547e660b9b396f772afe67d8481dbf0"
+                "sha256:d21d3901cb0da6ebd1e83fc9b0dfbde8b46afc2ede4fe32fbda0c7c6118ca094"
             ],
             "index": "pypi",
-            "version": "==1.5.3"
+            "version": "==1.5.4"
         },
         "cycler": {
             "hashes": [
@@ -105,10 +105,10 @@
         },
         "neo4j": {
             "hashes": [
-                "sha256:d7fa4adcb20dc724d95694b9eb6df6551b925dbe8abb733fbe73e42e18f75b26"
+                "sha256:a14838ea25c35ef49f7ed83d6885c06bae408088affa36769bce7489c42d7c4e"
             ],
             "index": "pypi",
-            "version": "==4.0.2"
+            "version": "==4.1.0"
         },
         "networkx": {
             "hashes": [
@@ -263,10 +263,10 @@
         },
         "autopep8": {
             "hashes": [
-                "sha256:60fd8c4341bab59963dafd5d2a566e94f547e660b9b396f772afe67d8481dbf0"
+                "sha256:d21d3901cb0da6ebd1e83fc9b0dfbde8b46afc2ede4fe32fbda0c7c6118ca094"
             ],
             "index": "pypi",
-            "version": "==1.5.3"
+            "version": "==1.5.4"
         },
         "flake8": {
             "hashes": [
