@@ -17,7 +17,65 @@ def _worker(name: str, task: Callable, results: dict):
     results[name] = task()
 
 
+def _get_subgraph_connectivity(graph: ReactomeGraph):
+    out = {'compartments': {}, 'pathways': {}}
+
+    compartment_subgraphs = graph.get_compartments_subgraphs()
+    for c in compartment_subgraphs:
+        out['compartments'][c] = {}
+        subgraph = compartment_subgraphs[c]
+        scc = list(nx.strongly_connected_components(subgraph))
+        wcc = list(nx.weakly_connected_components(subgraph))
+
+        out['compartments'][c]['scc'] = {'total': len(scc)}
+        scc_sizes = {}
+        for c_size in [*map(len, scc)]:
+            scc_sizes[c_size] = scc_sizes.get(c_size, 0) + 1
+        out['compartments'][c]['scc']['sizes'] = scc_sizes
+
+        out['compartments'][c]['wcc'] = {'total': len(wcc)}
+        wcc_sizes = {}
+        for c_size in [*map(len, wcc)]:
+            wcc_sizes[c_size] = wcc_sizes.get(c_size, 0) + 1
+        out['compartments'][c]['wcc']['sizes'] = wcc_sizes
+
+    pathway_subgraphs = graph.get_pathways_subgraphs()
+    for c in pathway_subgraphs:
+        out['pathways'][c] = {}
+        subgraph = pathway_subgraphs[c]
+        scc = list(nx.strongly_connected_components(subgraph))
+        wcc = list(nx.weakly_connected_components(subgraph))
+
+        out['pathways'][c]['scc'] = {'total': len(scc)}
+        scc_sizes = {}
+        for c_size in [*map(len, scc)]:
+            scc_sizes[c_size] = scc_sizes.get(c_size, 0) + 1
+        out['pathways'][c]['scc']['sizes'] = scc_sizes
+
+        out['pathways'][c]['wcc'] = {'total': len(wcc)}
+        wcc_sizes = {}
+        for c_size in [*map(len, wcc)]:
+            wcc_sizes[c_size] = wcc_sizes.get(c_size, 0) + 1
+        out['pathways'][c]['wcc']['sizes'] = wcc_sizes
+
+    return out
+
+
 def _analyze_stats(graph: ReactomeGraph, s: str):
+    data = {}
+
+    # bipartition
+    data['bipartition'] = {
+        'events': len(graph.event_nodes),
+        'entities': len(graph.entity_nodes),
+    }
+
+    # pathways
+    data['pathways'] = [p['name'] for p in graph.top_level_pathways.values()]
+
+    # compartments
+    data['compartments'] = [p for p in graph.compartments]
+
     # count node classes
     classes = {}
     for node in graph.nodes:
@@ -31,6 +89,7 @@ def _analyze_stats(graph: ReactomeGraph, s: str):
         edges[rel_type] = edges.get(rel_type, 0) + 1
 
     data = {
+        **data,
         'edges': {'total': nx.number_of_edges(graph), 'types': edges},
         'nodes': {'total': nx.number_of_nodes(graph), 'classes': classes},
     }
@@ -50,6 +109,8 @@ def _analyze_stats(graph: ReactomeGraph, s: str):
     for c_size in [*map(len, wcc)]:
         wcc_sizes[c_size] = wcc_sizes.get(c_size, 0) + 1
     data['wcc']['sizes'] = wcc_sizes
+
+    data['subgraphs'] = _get_subgraph_connectivity(graph)
 
     out_dir = f'{DATA_DIR}/{s}/analysis'
     Path(out_dir).mkdir(parents=True, exist_ok=True)
@@ -75,7 +136,6 @@ def _analyze_centrality(graph: ReactomeGraph, s: str):
         'laplacian': analyzer.calculate_laplacian,
         'leverage': analyzer.calculate_leverage,
         'h_index': analyzer.calculate_h_index
-        # TODO: add more centrality measures
     }
 
     manager = mp.Manager()

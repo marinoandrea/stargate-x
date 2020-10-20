@@ -9,7 +9,7 @@ REL_TYPES = ['input', 'output', 'catalyst',
 
 
 def main():
-    graphs = GraphBuilder(relationships=REL_TYPES).build()
+    graphs = GraphBuilder(relationships=REL_TYPES, species=['HSA']).build()
     for species, graph in graphs.items():
         graph_dir = f'{DATA_DIR}/{species}'
         Path(graph_dir).mkdir(parents=True, exist_ok=True)

@@ -16,6 +16,7 @@ matplotlib = "*"
 flake8 = "*"
 autopep8 = "*"
 scipy = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.8"
@@ -23,3 +24,4 @@ python_version = "3.8"
 [scripts]
 build = "bash ./scripts/main.sh -b"
 analyze = "bash ./scripts/main.sh -a"
+plot = "bash ./scripts/main.sh -p"
