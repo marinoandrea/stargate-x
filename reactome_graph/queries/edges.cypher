@@ -1,50 +1,18 @@
-
-
-// --- RELATIONSHIPS ---
-
-// Native reactome relationships:
-// - Entity-Entity
-match 
-    (a:PhysicalEntity),
-    (a)-[:species]->(s:Species),
-    (a)-[r:hasComponent|hasCandidate|hasMember|repeatedUnit]->(b),
-    (b:PhysicalEntity)
-where '$species' = s.abbreviation
-and b.stId =~ 'R-($species|ALL|NUL)-.*'
-return a as source, labels(a) as sourceLabels, type(r) as relType, r as relData, b as target, labels(b) as targetLabels
-
-// - Entity/Event does not exist
-
-union 
-
-// - Event/Entity
 match 
     (a:Event),
     (a)-[:species]->(s:Species),
-    (a)-[r:input|output|requiredInputComponent]->(b),
+    (a)-[r:input|output]->(b),
     (b:PhysicalEntity)
 where '$species' = s.abbreviation
 and b.stId =~ 'R-($species|ALL|NUL)-.*'
-return a as source, labels(a) as sourceLabels, type(r) as relType, r as relData, b as target, labels(b) as targetLabels
-
-
-union 
-
-// - Event/Event
-match 
-    (a:Event),
-    (a)-[:species]->(s:Species),
-    (a)-[r:hasEvent|precedingEvent|hasEncapsulatedEvent|reverseReaction|normalPathway|normalReaction]->(b),
-    (b:Event)
-where '$species' = s.abbreviation
-and b.stId =~ 'R-($species|ALL|NUL)-.*'
-return a as source, labels(a) as sourceLabels, type(r) as relType, r as relData, b as target, labels(b) as targetLabels
-
+return 
+    { data: a, labels: labels(a) } as source, 
+    { type: type(r), data: r} as relationship, 
+    { data: b, labels: labels(b) } as target
 
 union
 
-// Non-native reactome relationships elaboration
-// - CATALYST
+// Non-native reactome relationships
 match 
     (a:Event),
     (a)-[:species]->(s:Species),
@@ -52,23 +20,14 @@ match
     (b:PhysicalEntity)
 where '$species' = s.abbreviation
 and b.stId =~ 'R-($species|ALL|NUL)-.*'
-return a as source, labels(a) as sourceLabels, 'catalyst' as relType, null as relData, b as target, labels(b) as targetLabels
+return 
+    { data: a, labels: labels(a) } as source, 
+    { type: 'catalyst', data: {order: null, stoichiometry: 0}} as relationship, 
+    { data: b, labels: labels(b) } as target
 
 union
 
-// - CATALYST_ACTIVE_UNIT
-match 
-    (a:Event),
-    (a)-[:species]->(s:Species),
-    (a)-[:catalystActivity]->()-[:activeUnit]->(b),
-    (b:PhysicalEntity)
-where '$species' = s.abbreviation
-and b.stId =~ 'R-($species|ALL|NUL)-.*'
-return a as source, labels(a) as sourceLabels, 'catalystActiveUnit' as relType, null as relData, b as target, labels(b) as targetLabels
 
-union
-
-// - POSITIVE_REGULATOR
 match 
     (a:Event),
     (a)-[:species]->(s:Species),
@@ -76,11 +35,13 @@ match
     (b:PhysicalEntity)
 where '$species' = s.abbreviation
 and b.stId =~ 'R-($species|ALL|NUL)-.*'
-return a as source, labels(a) as sourceLabels, 'positiveRegulator' as relType, null as relData, b as target, labels(b) as targetLabels
+return 
+    { data: a, labels: labels(a) } as source, 
+    { type: 'positiveRegulator', data: {order: null, stoichiometry: 0}} as relationship, 
+    { data: b, labels: labels(b) } as target
 
 union
 
-// - NEGATIVE_REGULATOR
 match 
     (a:Event),
     (a)-[:species]->(s:Species),
@@ -88,14 +49,7 @@ match
     (b:PhysicalEntity)
 where '$species' = s.abbreviation
 and b.stId =~ 'R-($species|ALL|NUL)-.*'
-return a as source, labels(a) as sourceLabels, 'negativeRegulator' as relType, null as relData, b as target, labels(b) as targetLabels
-
-union
-
-match (a:Event),
-    (a)-[:species ]->(s:Species),
-    (a)-[:regulatedBy ]->()-[:activeUnit ]->(b),
-    (b:PhysicalEntity)
-where '$species' = s.abbreviation
-and b.stId =~ 'R-($species|ALL|NUL)-.*'
-return a as source, labels(a) as sourceLabels , 'regulatorActiveUnit' as relType , null as relData , b as target, labels(b) as targetLabels;
+return 
+    { data: a, labels: labels(a) } as source, 
+    { type: 'negativeRegulator', data: {order: null, stoichiometry: 0}} as relationship, 
+    { data: b, labels: labels(b) } as target;
