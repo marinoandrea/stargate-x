@@ -132,7 +132,7 @@ class ReactomeGraphBuilder:
             nodes[node]['compartments'].add(compartment['id'])
 
         graph = ReactomeGraph()
-        graph.pathways = list(pathways.values()),
+        graph.pathways = list(pathways.values())
         graph.compartments = list(compartments.values())
 
         for edge in edges:
