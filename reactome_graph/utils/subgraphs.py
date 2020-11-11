@@ -15,8 +15,11 @@ def build_subgraph_from_condition(
     out.compartments = compartments
 
     for node, data in graph.nodes(data=True):
-        if check_condition(node):
-            out.add_node(node, **data)
+        try:
+            if check_condition(node):
+                out.add_node(node, **data)
+        except Exception:
+            continue
 
     for u, v, data in graph.edges(data=True):
         if (u in out.nodes and v in out.nodes):
