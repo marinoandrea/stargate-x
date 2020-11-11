@@ -1,27 +1,56 @@
-import networkx as nx
 import scipy as sp
 import numpy as np
-from reactome_graph import EVENT, ENTITY
+import networkx as nx
+import pickle
+from typing import Set, Iterable
+from dataclasses import dataclass
 from reactome_graph.utils.cache import cached
-from typing import Dict, Set, Union
+from reactome_graph.constants import ENTITY, EVENT
 
 
 class ReactomeGraph(nx.MultiDiGraph):
+    """
+    Reactome directed multigraph. Its underlying implementation
+    uses `networkx.MultiDiGraph`.
+    """
 
-    def __init__(self, **kwargs):
+    @dataclass(frozen=True, eq=True)
+    class Pathway:
+        id: str
+        name: str
+        is_top_level: bool
+        in_disease: bool
+
+    @dataclass(frozen=True, eq=True)
+    class Compartment:
+        id: str
+        name: str
+
+    @staticmethod
+    def from_pickle(file_path: str) -> 'ReactomeGraph':
         """
-        Reactome directed multigraph. Its underlying implementation
-        uses `networkx.MultiDiGraph`.
+        Loads a ReactomeGraph from a pickle file.
+
+        Parameters
+        ----------
+        file_path: `str`
+        File path to a pickled ReactomeGraph.
+
+        Returns
+        -------
+        `ReactomeGraph`
+        The returned graph is a freezed instance of `networkx.MultiDiGraph` so
+        it cannot be changed without unfreezing first.
         """
-        super().__init__(**kwargs)
-        self._cache = {}
+        with open(file_path, 'rb') as f:
+            out = nx.freeze(pickle.load(f))
+        return out
 
     @property
     @cached
     def adjacency_matrix(self) -> sp.sparse.csc_matrix:
         out = nx.adjacency_matrix(self)
-        out = sp.sparse.csc_matrix(out, dtype=np.int8)
-        return out
+        return sp.sparse.csc_matrix(out, dtype=np.int8)
 
     @property
     @cached
@@ -37,27 +66,5 @@ class ReactomeGraph(nx.MultiDiGraph):
 
     @property
     @cached
-    def pathways(self) -> Dict[str, Dict[str, Union[int, Set[str]]]]:
-        """
-        A dictionary containing information about pathways
-        represented in the graph.
-        The dictionary has pathway stIds as keys and for each
-        pathway contains its depth level and a set of reaction
-        nodes contained in the pathway.
-
-        Returns
-        -------
-        Dict[str, Dict[str, Union[int, Set[str]]]]
-            The dictionary containing pathway information.
-        """
-        out = {}
-        for n, data in self.nodes(data=True):
-            try:
-                for p in data['pathways']:
-                    st_id, lvl = p['stId'], p['level']
-                    if st_id not in out:
-                        out[st_id] = {'level': lvl, 'nodes': set()}
-                    out[st_id]['nodes'].add(n)
-            except KeyError:
-                continue
-        return out
+    def top_level_pathways(self) -> Iterable[Pathway]:
+        return list(filter(lambda x: x.is_top_level, self.pathways))
