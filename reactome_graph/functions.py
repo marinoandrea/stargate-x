@@ -137,7 +137,7 @@ def get_compartment_subgraph(
     `ReactomeGraph`
     """
     try:
-        next(c.name for c in G.compartments if c.name == compartment)
+        next(c.id for c in G.compartments if c.id == compartment)
     except StopIteration:
         raise ValueError(f'Compartment \'{compartment}\' not present')
     return build_compartment_subgraph(G, compartment)
@@ -164,7 +164,7 @@ def get_all_compartment_subgraphs(
     """
     for c in compartments:
         try:
-            next(dc.name for dc in G.compartments if dc.name == c)
+            next(dc.id for dc in G.compartments if dc.id == c)
         except StopIteration:
             raise ValueError(f'Compartment \'{c}\' not present')
     return build_compartments_subgraphs(G, compartments)
