@@ -2,6 +2,14 @@
 
 The package is a python implementation of a bipartite directed multigraph extracted from the Reactome database. Its underlying implementation uses `networkx`.
 
+The graph represents **reactions** and **physical entities** as nodes, edges are classified into 5 categories:
+
+- input
+- output
+- catalyst
+- positiveRegulator
+- negativeRegulator
+
 ## Installation
 
 ```bash
@@ -52,6 +60,6 @@ plasma_membrane_subgraph = rg.get_compartment_subgraph(hsa_graph, 'GO:0005886')
 
 ## Authors
 
-- **Andrea Marino** - [marinoandrea](https://github.com/marinoandrea)
+- **Andrea Marino** - ([marinoandrea](https://github.com/marinoandrea))
 
 See also the list of [contributors](https://github.com/marinoandrea/reactome-graph/contributors) who participated in this project.
