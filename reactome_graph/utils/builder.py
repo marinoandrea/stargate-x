@@ -129,7 +129,7 @@ class ReactomeGraphBuilder:
             if 'compartments' not in nodes[node]:
                 nodes[node]['compartments'] = set()
 
-            nodes[node]['compartments'].add(compartment['name'])
+            nodes[node]['compartments'].add(compartment['id'])
 
         graph = ReactomeGraph()
         graph.pathways = list(pathways.values()),
@@ -158,7 +158,7 @@ class ReactomeGraphBuilder:
         pool.join()
 
         result_edges = results[0]
-        result_pathways = results[1]    
+        result_pathways = results[1]
         result_compartments = results[2]
 
         graph = self._parse_records(
