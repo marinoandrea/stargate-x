@@ -1,6 +1,7 @@
 import multiprocessing as mp
 from reactome_graph.graph import ReactomeGraph
 from typing import Callable, Iterable, Dict
+from functools import partial
 
 
 def build_subgraph_from_condition(
@@ -9,57 +10,68 @@ def build_subgraph_from_condition(
     pathways: Iterable[ReactomeGraph.Pathway],
     compartments: Iterable[ReactomeGraph.Compartment],
 ) -> ReactomeGraph:
+    out = ReactomeGraph()
+    out.pathways = pathways
+    out.compartments = compartments
 
-    out = ReactomeGraph(pathways, compartments)
+    for node, data in graph.nodes(data=True):
+        if check_condition(node):
+            out.add_node(node, **data)
 
-    out.add_nodes_from([(n, d) for n, d in graph.nodes(data=True)
-                        if check_condition(n)])
-
-    for n, node_data in ():
-        for adj, edge_data in graph.adj[n].items():
-            if check_condition(adj):
-                out.add_edge(n, adj, **edge_data)
+    for u, v, data in graph.edges(data=True):
+        if (u in out.nodes and v in out.nodes):
+            out.add_edge(u, v, **data)
 
     return out
 
 
 def build_pathway_subgraph(
     graph: ReactomeGraph,
-    pathway: ReactomeGraph.Pathway
+    pathway: str
 ) -> ReactomeGraph:
+
+    _pathway = next(p for p in graph.pathways if p.id == pathway)
 
     return build_subgraph_from_condition(
         graph,
-        lambda x: pathway['id'] in graph.nodes[x]['pathways'],
-        pathways=[pathway],
+        lambda x: pathway in graph.nodes[x]['pathways'],
+        pathways=[_pathway],
         compartments=graph.compartments)
 
 
 def build_compartment_subgraph(
     graph: ReactomeGraph,
-    compartment: ReactomeGraph.Compartment
+    compartment: str
 ) -> ReactomeGraph:
+
+    _compartment = next(c for c in graph.compartments if c.id == compartment)
 
     return build_subgraph_from_condition(
         graph,
-        lambda x: compartment['name'] in graph.nodes[x]['compartments'],
-        pathways=[compartment],
-        compartments=graph.compartments)
+        lambda x: compartment in graph.nodes[x]['compartments'],
+        pathways=graph.pathways,
+        compartments=[_compartment])
 
 
-def build_pathways_subgraphs(graph: ReactomeGraph) -> (
-    Dict[str, ReactomeGraph]
-):
-    def task(p: ReactomeGraph.Pathway):
-        return p.id, build_pathway_subgraph(p)
+def _pathways_task(graph, p: str):
+    return p, build_pathway_subgraph(graph, p)
+
+
+def build_pathways_subgraphs(
+    graph: ReactomeGraph,
+    pathways: Iterable[str]
+) -> Dict[str, ReactomeGraph]:
     pool = mp.Pool(mp.cpu_count())
-    return dict(pool.map(task, graph.pathways))
+    return dict(pool.map(partial(_pathways_task, graph), pathways))
 
 
-def build_compartments_subgraphs(graph: ReactomeGraph) -> (
-    Dict[str, ReactomeGraph]
-):
-    def task(c: ReactomeGraph.Compartment):
-        return c.name, build_compartment_subgraph(c)
+def _compartments_task(graph, c: str):
+    return c, build_compartment_subgraph(graph, c)
+
+
+def build_compartments_subgraphs(
+    graph: ReactomeGraph,
+    compartments: Iterable[str]
+) -> Dict[str, ReactomeGraph]:
     pool = mp.Pool(mp.cpu_count())
-    return dict(pool.map(task, graph.compartments))
+    return dict(pool.map(partial(_compartments_task, graph), compartments))
