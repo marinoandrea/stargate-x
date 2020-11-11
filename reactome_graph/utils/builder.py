@@ -1,7 +1,8 @@
 import neo4j
+import pkgutil
 import networkx as nx
-import multiprocessing.dummy as mp
-from multiprocessing import cpu_count
+from os import cpu_count
+from multiprocessing.pool import ThreadPool, Pool
 from typing import Sequence, Dict, Tuple
 from reactome_graph import ReactomeGraph
 from reactome_graph.utils.neo4j import Neo4jClient
@@ -19,31 +20,26 @@ class ReactomeGraphBuilder:
     def __init__(
         self,
         species: Sequence[str] = None,
-        relationships: Sequence[str] = None,
         options: Dict = {}
     ):
-        self._load_queries()
-        self.relationships = relationships
         self.options = options
+        self._load_queries()
         if species is None:
             self._load_species()
         else:
             self.species = species
 
     def _load_queries(self):
-        with open(EDGES_QUERY, 'r') as f1,\
-             open(PATHWAYS_QUERY, 'r') as f2,\
-             open(COMPARTMENTS_QUERY, 'r') as f3:
-            self._query_edges = f1.read()
-            self._query_pathways = f2.read()
-            self._query_compartments = f3.read()
+        self._query_edges = pkgutil.get_data('reactome_graph', EDGES_QUERY).decode('utf-8')
+        self._query_pathways = pkgutil.get_data('reactome_graph', PATHWAYS_QUERY).decode('utf-8')
+        self._query_compartments = pkgutil.get_data('reactome_graph', COMPARTMENTS_QUERY).decode('utf-8')
 
     def _load_species(self):
         client = Neo4jClient(
             uri=self.options.get('neo4j_uri', 'bolt://localhost:7687'))
         result = client.make_query(
-            'match (s:Species) return s.abbreviation as code;')
-        self.species = [str(s['code']) for s in result]
+            'match (s:Species) return s.displayName as name;')
+        self.species = [str(s['name']) for s in result]
         client.close()
 
     def _parse_edges_records(self, records: neo4j.Result) -> (
@@ -59,24 +55,19 @@ class ReactomeGraphBuilder:
                 target = dict(record['target']['data'])
                 relationship = {
                     **dict(record['relationship']['data']),
-                    'type': record['type']
+                    'type': record['relationship']['type']
                 }
 
             except (ValueError, TypeError, KeyError):
                 continue
 
-            if (self.relationships is not None
-                    and relationship['type'] not in self.relationships):
-                continue
-
             # change edge direction
-            if relationship['type'] in ['input',
-                                        'catalyst',
-                                        'positiveRegulator',
-                                        'negativeRegulator',
-                                        'catalystActiveUnit',
-                                        'regulatorActiveUnit',
-                                        'requiredInputComponent']:
+            if relationship['type'] in [
+                'input',
+                'catalyst',
+                'positiveRegulator',
+                'negativeRegulator'
+            ]:
                 t = {**source}
                 source = {**target}
                 target = t
@@ -125,8 +116,8 @@ class ReactomeGraphBuilder:
 
             node = record['node']
             compartment = {
-                'name': record['compartment']['data']['name'],
-                'is_top_level':  record['compartment']['isTopLevel'],
+                'id': f"GO:{record['compartment']['accession']}",
+                'name': record['compartment']['name'],
             }
 
             compartments[compartment['name']] = (
@@ -140,10 +131,9 @@ class ReactomeGraphBuilder:
 
             nodes[node]['compartments'].add(compartment['name'])
 
-        graph = ReactomeGraph(
-            list(pathways.values()),
-            list(compartments.values())
-        )
+        graph = ReactomeGraph()
+        graph.pathways = list(pathways.values()),
+        graph.compartments = list(compartments.values())
 
         for edge in edges:
             source, target, rel_data = edge
@@ -161,9 +151,15 @@ class ReactomeGraphBuilder:
         query_pathways = self._query_pathways.replace('$species', s)
         query_compartments = self._query_compartments.replace('$species', s)
 
-        result_edges = client.make_query(query_edges)
-        result_pathways = client.make_query(query_pathways)
-        result_compartments = client.make_query(query_compartments)
+        tasks = [query_edges, query_pathways, query_compartments]
+        pool = ThreadPool(3)
+        results = pool.map(client.make_query, tasks)
+        pool.close()
+        pool.join()
+
+        result_edges = results[0]
+        result_pathways = results[1]    
+        result_compartments = results[2]
 
         graph = self._parse_records(
             result_edges, result_pathways, result_compartments)
@@ -173,7 +169,9 @@ class ReactomeGraphBuilder:
         return s, graph
 
     def _extract(self):
-        pool = mp.Pool(cpu_count())
+        if len(self.species) == 1:
+            return [self._extract_species(self.species[0])]
+        pool = Pool(min(len(self.species), cpu_count()))
         out = pool.map(self._extract_species, self.species)
         pool.close()
         pool.join()
