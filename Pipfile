@@ -4,17 +4,19 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-flake8 = "*"
+matplotlib = "*"
+pandas = "*"
+pygraphviz = "*"
+requests = "*"
+grequests = "*"
+tqdm = "*"
 autopep8 = "*"
-pylint = "*"
+flake8 = "*"
 
 [packages]
 networkx = "*"
 neo4j = "*"
 numpy = "*"
-matplotlib = "*"
-flake8 = "*"
-autopep8 = "*"
 scipy = "*"
 
 [requires]
