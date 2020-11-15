@@ -15,7 +15,7 @@ setup(
   author='Andrea Marino',
   author_email='am.marinoandrea@gmail.com',
   url='https://github.com/marinoandrea/reactome-graph',
-  download_url='https://github.com/marinoandrea/reactome-graph/tarball/1.0',
+  download_url='https://github.com/marinoandrea/reactome-graph/tarball/1.0.4',
   keywords=['reactome', 'pathway', 'pathways', 'graph', 'bipartite'],
   include_package_data=True,
   install_requires=['networkx', 'neo4j', 'numpy', 'scipy'],
