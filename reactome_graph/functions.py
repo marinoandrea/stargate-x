@@ -59,7 +59,7 @@ def build(species: Union[Species, str], options={}) -> ReactomeGraph:
     return builder.build()[species]
 
 
-def build_all(species: Iterable[str], options={}) -> (
+def build_all(species: Iterable[Union[Species, str]], options={}) -> (
     Dict[str, ReactomeGraph]
 ):
     """
@@ -69,8 +69,7 @@ def build_all(species: Iterable[str], options={}) -> (
 
     Parameters
     ----------
-    species: Iterable[str]
-    Identifiers (3 letters) for all Reactome taxons of interest.
+    species: `Iterable[Union[reactome_graph.Species, str]]`
 
     options: dict
     configuration options:
@@ -130,7 +129,7 @@ def get_compartment_subgraph(
     G: `ReactomeGraph`
 
     compartment: `str`
-    A Reactome name identifier for a compartment.
+    A GO identifier for a compartment.
 
     Returns
     -------

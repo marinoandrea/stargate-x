@@ -4,7 +4,7 @@ match
     (a)-[r:input|output]->(b),
     (b:PhysicalEntity)
 where '$species' = s.displayName
-or b.stId =~ ('R-(' + s.abbrevation + '|ALL|NUL)-.*')
+and b.stId =~ ('R-(' + s.abbrevation + '|ALL|NUL)-.*')
 return 
     { data: a, labels: labels(a) } as source, 
     { type: type(r), data: r} as relationship, 
