@@ -4,7 +4,7 @@ match
     (a)-[r:input|output]->(b),
     (b:PhysicalEntity)
 where '$species' = s.displayName
-and b.stId =~ ('R-(' + s.abbrevation + '|ALL|NUL)-.*')
+and b.stId =~ ('R-(' + s.abbreviation + '|ALL|NUL)-.*')
 return 
     { data: a, labels: labels(a) } as source, 
     { type: type(r), data: r} as relationship, 
@@ -19,7 +19,7 @@ match
     (a)-[:catalystActivity]->()-[:physicalEntity]->(b),
     (b:PhysicalEntity)
 where '$species' = s.displayName
-and b.stId =~ ('R-(' + s.abbrevation + '|ALL|NUL)-.*')
+and b.stId =~ ('R-(' + s.abbreviation + '|ALL|NUL)-.*')
 return 
     { data: a, labels: labels(a) } as source, 
     { type: 'catalyst', data: {order: null, stoichiometry: 0}} as relationship, 
@@ -34,7 +34,7 @@ match
     (a)-[:regulatedBy]->(:PositiveRegulation)-[:regulator]->(b),
     (b:PhysicalEntity)
 where '$species' = s.displayName
-and b.stId =~ ('R-(' + s.abbrevation + '|ALL|NUL)-.*')
+and b.stId =~ ('R-(' + s.abbreviation + '|ALL|NUL)-.*')
 return 
     { data: a, labels: labels(a) } as source, 
     { type: 'positiveRegulator', data: {order: null, stoichiometry: 0}} as relationship, 
@@ -48,7 +48,7 @@ match
     (a)-[:regulatedBy]->(:NegativeRegulation)-[:regulator]->(b),
     (b:PhysicalEntity)
 where '$species' = s.displayName
-and b.stId =~ ('R-(' + s.abbrevation + '|ALL|NUL)-.*')
+and b.stId =~ ('R-(' + s.abbreviation + '|ALL|NUL)-.*')
 return 
     { data: a, labels: labels(a) } as source, 
     { type: 'negativeRegulator', data: {order: null, stoichiometry: 0}} as relationship, 
