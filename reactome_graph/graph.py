@@ -5,8 +5,6 @@ from multiprocessing.pool import ThreadPool
 from typing import Callable, Iterable, List, Set, Union
 
 import networkx as nx
-import numpy as np
-import scipy as sp
 
 from reactome_graph.constants import (COMPARTMENTS_QUERY, DATA_FOLDER,
                                       EDGES_QUERY, ENTITY, EVENT,
@@ -47,12 +45,6 @@ class ReactomeGraph(nx.MultiDiGraph):
     @cached
     def top_level_pathways(self) -> Iterable[Pathway]:
         return list(filter(lambda x: x.is_top_level, self.pathways))
-
-    @property  # type: ignore
-    @cached
-    def adjacency_matrix(self) -> sp.sparse.csc_matrix:
-        out = nx.adjacency_matrix(self)
-        return sp.sparse.csc_matrix(out, dtype=np.int8)
 
     def get_pathway_subgraph(self, pathway: str) -> 'ReactomeGraph':
         """
