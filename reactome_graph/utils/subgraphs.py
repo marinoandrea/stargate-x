@@ -1,14 +1,16 @@
 import multiprocessing as mp
-from reactome_graph.graph import ReactomeGraph
-from typing import Callable, Iterable, Dict
 from functools import partial
+from typing import Callable, Dict, Iterable
+
+from reactome_graph.data import Compartment, Pathway
+from reactome_graph.graph import ReactomeGraph
 
 
 def build_subgraph_from_condition(
     graph: ReactomeGraph,
     check_condition: Callable,
-    pathways: Iterable[ReactomeGraph.Pathway],
-    compartments: Iterable[ReactomeGraph.Compartment],
+    pathways: Iterable[Pathway],
+    compartments: Iterable[Compartment],
 ) -> ReactomeGraph:
     out = ReactomeGraph()
     out.pathways = pathways

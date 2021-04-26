@@ -1,7 +1,6 @@
-from .species import Species
+from .functions import build, get_compartment_subgraph, get_pathway_subgraph
 from .graph import ReactomeGraph
-from .functions import *
-
+from .species import Species
 
 __all__ = [
     'ReactomeGraph',

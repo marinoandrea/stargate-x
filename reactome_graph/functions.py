@@ -1,17 +1,16 @@
+import io
 import pickle
 import pkgutil
-import io
-from reactome_graph.graph import ReactomeGraph
-from reactome_graph.utils.builder import ReactomeGraphBuilder
-from reactome_graph.utils.subgraphs import (
-    build_compartment_subgraph,
-    build_compartments_subgraphs,
-    build_pathway_subgraph,
-    build_pathways_subgraphs
-)
-from typing import Iterable, Dict, Union
-from reactome_graph.species import Species
+from typing import Iterable, Mapping, Union
+
 from reactome_graph.constants import DATA_FOLDER
+from reactome_graph.graph import ReactomeGraph
+from reactome_graph.species import Species
+from reactome_graph.utils.builder import ReactomeGraphBuilder
+from reactome_graph.utils.subgraphs import (build_compartment_subgraph,
+                                            build_compartments_subgraphs,
+                                            build_pathway_subgraph,
+                                            build_pathways_subgraphs)
 
 
 def load(species: Union[Species, str]) -> ReactomeGraph:
@@ -29,9 +28,15 @@ def load(species: Union[Species, str]) -> ReactomeGraph:
     The returned graph is a freezed instance of `networkx.MultiDiGraph` so
     it cannot be changed without unfreezing first.
     """
-    s_name = species if type(species) is str else species.value
+    s_name = species.value if isinstance(species, Species) else species
     data = pkgutil.get_data(__name__, f'{DATA_FOLDER}/{s_name}.pickle')
-    return pickle.load(io.BytesIO(data))
+    if data is None:
+        raise RuntimeError(
+            f'Graph for the species {s_name} is not available. ' +
+            'You may consider building it using `reactome_graph.build`'
+        )
+    out: ReactomeGraph = pickle.load(io.BytesIO(data))
+    return out
 
 
 def build(species: Union[Species, str], options={}) -> ReactomeGraph:
@@ -54,14 +59,14 @@ def build(species: Union[Species, str], options={}) -> ReactomeGraph:
     The returned graph is a freezed instance of `networkx.MultiDiGraph` so
     it cannot be changed without unfreezing first.
     """
-    s_name = species if type(species) is str else species.value
+    s_name = species.value if isinstance(species, Species) else species
     builder = ReactomeGraphBuilder(species=[s_name], options=options)
-    return builder.build()[species]
+    return builder.build()[s_name]
 
 
-def build_all(species: Iterable[Union[Species, str]], options={}) -> (
-    Dict[str, ReactomeGraph]
-):
+def build_all(
+    species: Iterable[Union[Species, str]], options={}
+) -> Mapping[str, ReactomeGraph]:
     """
     Factory method, builds Reactome graphs for every species
     in the arguments concurrently. Requires a working Neo4j instance
@@ -86,7 +91,7 @@ def build_all(species: Iterable[Union[Species, str]], options={}) -> (
     """
     out = []
     for s in species:
-        s_name = species if type(species) is str else species.value
+        s_name = s.value if isinstance(s, Species) else s
         out.append(s_name)
     builder = ReactomeGraphBuilder(species=out, options=options)
     return builder.build()
@@ -145,7 +150,7 @@ def get_compartment_subgraph(
 def get_all_compartment_subgraphs(
     G: ReactomeGraph,
     compartments: Iterable[str]
-) -> Dict[str, ReactomeGraph]:
+) -> Mapping[str, ReactomeGraph]:
     """
     Generate subgraphs using nodes for all compartments in the graph.
 
@@ -172,7 +177,7 @@ def get_all_compartment_subgraphs(
 def get_all_pathway_subgraphs(
     G: ReactomeGraph,
     pathways: Iterable[str]
-) -> Dict[str, ReactomeGraph]:
+) -> Mapping[str, ReactomeGraph]:
     """
     Generate subgraphs using nodes for all pathways specified.
 

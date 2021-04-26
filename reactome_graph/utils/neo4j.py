@@ -1,5 +1,6 @@
-import neo4j
 from reactome_graph.utils.cache import cached
+
+import neo4j
 
 
 class Neo4jClient(object):

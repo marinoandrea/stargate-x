@@ -1,18 +1,16 @@
-import neo4j
 import pkgutil
-import networkx as nx
+from multiprocessing.pool import Pool, ThreadPool
 from os import cpu_count
-from multiprocessing.pool import ThreadPool, Pool
-from typing import Sequence, Dict, Tuple
-from reactome_graph import ReactomeGraph
+from typing import Dict, Mapping, Sequence, Tuple
+
+import networkx as nx
+from reactome_graph.constants import (COMPARTMENTS_QUERY, EDGES_QUERY, ENTITY,
+                                      EVENT, PATHWAYS_QUERY)
+from reactome_graph.data import Compartment, Pathway
+from reactome_graph.graph import ReactomeGraph
 from reactome_graph.utils.neo4j import Neo4jClient
-from reactome_graph.constants import (
-    ENTITY,
-    EVENT,
-    COMPARTMENTS_QUERY,
-    EDGES_QUERY,
-    PATHWAYS_QUERY
-)
+
+import neo4j
 
 
 class ReactomeGraphBuilder:
@@ -30,9 +28,18 @@ class ReactomeGraphBuilder:
             self.species = species
 
     def _load_queries(self):
-        self._query_edges = pkgutil.get_data('reactome_graph', EDGES_QUERY).decode('utf-8')
-        self._query_pathways = pkgutil.get_data('reactome_graph', PATHWAYS_QUERY).decode('utf-8')
-        self._query_compartments = pkgutil.get_data('reactome_graph', COMPARTMENTS_QUERY).decode('utf-8')
+        edges = pkgutil.get_data('reactome_graph', EDGES_QUERY)
+        pathways = pkgutil.get_data('reactome_graph', PATHWAYS_QUERY)
+        compartments = pkgutil.get_data('reactome_graph', COMPARTMENTS_QUERY)
+
+        # NOTE(andrea): this should never happen, it would mean
+        # that packaging has gone wrong.
+        if (edges is None or pathways is None or compartments is None):
+            raise RuntimeError('Queries have not been imported correctly.')
+
+        self._query_edges = edges.decode('utf-8')
+        self._query_pathways = pathways.decode('utf-8')
+        self._query_compartments = compartments.decode('utf-8')
 
     def _load_species(self):
         client = Neo4jClient(
@@ -102,7 +109,7 @@ class ReactomeGraphBuilder:
                 'in_disease': record['pathway']['data']['isInDisease'],
             }
 
-            pathways[pathway['id']] = ReactomeGraph.Pathway(**pathway)
+            pathways[pathway['id']] = Pathway(**pathway)
 
             if reaction not in nodes:
                 continue
@@ -120,8 +127,7 @@ class ReactomeGraphBuilder:
                 'name': record['compartment']['name'],
             }
 
-            compartments[compartment['name']] = (
-                ReactomeGraph.Compartment(**compartment))
+            compartments[compartment['name']] = Compartment(**compartment)
 
             if node not in nodes:
                 continue
@@ -177,5 +183,5 @@ class ReactomeGraphBuilder:
         pool.join()
         return out
 
-    def build(self):
+    def build(self) -> Mapping[str, ReactomeGraph]:
         return {species: graph for species, graph in self._extract()}
