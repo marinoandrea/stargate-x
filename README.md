@@ -59,8 +59,6 @@ Represents a graph for a certain species.
 
 #### Properties:
 
----
-
 | PROPERTY             | TYPE                    | DESCRIPTION                                                |
 | -------------------- | ----------------------- | ---------------------------------------------------------- |
 | `event_nodes`        | `Set[str]`              | Set containing all the event nodes identifiers.            |
@@ -69,11 +67,7 @@ Represents a graph for a certain species.
 | `pathways`           | `Iterable[Pathway]`     | List of all pathways for this graph instance.              |
 | `top_level_pathways` | `Iterable[Pathway]`     | List of all top level pathways for this graph instance.    |
 
----
-
 #### Methods:
-
----
 
 | METHOD                     | ARGUMENTS                                                       | RETURNS       | DESCRIPTION                                                                                          |
 | -------------------------- | --------------------------------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------- |
@@ -92,8 +86,6 @@ Dataclass containing basic pathway information.
 
 #### Properties:
 
----
-
 | PROPERTY       | TYPE   | DESCRIPTION                                 |
 | -------------- | ------ | ------------------------------------------- |
 | `id`           | `str`  | Reactome pathway identifier.                |
@@ -101,22 +93,16 @@ Dataclass containing basic pathway information.
 | `is_top_level` | `bool` | Whether the pathway is a top level pathway. |
 | `in_disease`   | `bool` | Whether the pathway is part of a disease.   |
 
----
-
 ### Compartment
 
 Dataclass containing basic cellulare compartment information.
 
 #### Properties:
 
----
-
 | PROPERTY | TYPE  | DESCRIPTION                                      |
 | -------- | ----- | ------------------------------------------------ |
 | `id`     | `str` | GO compartment identifier (starting with 'GO:'). |
 | `name`   | `str` | Reactome display name.                           |
-
----
 
 ## Examples
 
