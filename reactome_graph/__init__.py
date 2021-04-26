@@ -1,13 +1,10 @@
-from .species import Species
+from .data import Compartment, Pathway
 from .graph import ReactomeGraph
-from .functions import *
-
+from .species import Species
 
 __all__ = [
     'ReactomeGraph',
     'Species',
-    'load',
-    'build',
-    'get_pathway_subgraph',
-    'get_compartment_subgraph'
+    'Pathway',
+    'Compartment'
 ]

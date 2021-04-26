@@ -1,13 +1,11 @@
 from distutils.core import setup
 
+VERSION = '2.0.0'
 
 setup(
     name='reactome-graph',
-    packages=[
-        'reactome_graph',
-        'reactome_graph.utils'
-    ],
-    version='1.0.7',
+    packages=['reactome_graph'],
+    version=VERSION,
     description=(
         '''
         The package is a python implementation of a bipartite directed
@@ -19,15 +17,10 @@ setup(
     author_email='am.marinoandrea@gmail.com',
     url='https://github.com/marinoandrea/reactome-graph',
     download_url=(
-        'https://github.com/marinoandrea/reactome-graph/tarball/1.0.7'
+        f'https://github.com/marinoandrea/reactome-graph/tarball/{VERSION}'
     ),
     keywords=['reactome', 'pathway', 'pathways', 'graph', 'bipartite'],
-    install_requires=[
-        'networkx',
-        'neo4j',
-        'numpy',
-        'scipy'
-    ],
+    install_requires=['networkx', 'neo4j'],
     include_package_data=True,
     package_data={
         'reactome_graph': [
