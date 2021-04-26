@@ -23,8 +23,7 @@ class ReactomeGraph(nx.MultiDiGraph):
     pathways: List[Pathway]
     compartments: List[Compartment]
 
-    @property  # type: ignore
-    @cached
+    @property
     def event_nodes(self) -> Set[str]:
         """
         Set containing all the event nodes identifiers.
@@ -32,8 +31,7 @@ class ReactomeGraph(nx.MultiDiGraph):
         return {n for n, d in self.nodes(data=True)
                 if d['bipartite'] == EVENT}
 
-    @property  # type: ignore
-    @cached
+    @property
     def entity_nodes(self) -> Set[str]:
         """
         Set containing all the entity nodes identifiers.
@@ -41,8 +39,7 @@ class ReactomeGraph(nx.MultiDiGraph):
         return {n for n, d in self.nodes(data=True)
                 if d['bipartite'] == ENTITY}
 
-    @property  # type: ignore
-    @cached
+    @property
     def top_level_pathways(self) -> Iterable[Pathway]:
         return list(filter(lambda x: x.is_top_level, self.pathways))
 
