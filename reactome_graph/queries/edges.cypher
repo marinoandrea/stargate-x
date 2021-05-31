@@ -12,6 +12,19 @@ return
 
 union
 
+match 
+    (a:Entity),
+    (a)-[:species]->(s:Species),
+    (a)-[r:referenceEntity]->(b),
+    (b:ReferenceEntity)
+where '$species' = s.displayName
+return 
+    { data: a, labels: labels(a) } as source, 
+    { type: type(r), data: r} as relationship, 
+    { data: b, labels: labels(b) } as target
+
+union
+
 // Non-native reactome relationships
 match 
     (a:Event),

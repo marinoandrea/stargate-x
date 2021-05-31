@@ -182,6 +182,7 @@ class ReactomeGraph(nx.MultiDiGraph):
                 }
             except (ValueError, TypeError, KeyError):
                 continue
+
             # change edge direction
             if relationship['type'] in [
                 'input',
@@ -192,14 +193,23 @@ class ReactomeGraph(nx.MultiDiGraph):
                 t = {**source}
                 source = {**target}
                 target = t
+
             # bipartite networkx convention
-            source['bipartite'] = (EVENT if 'Event'
-                                   in record['source']['labels'] else ENTITY)
-            target['bipartite'] = (EVENT if 'Event'
-                                   in record['target']['labels'] else ENTITY)
-            nodes[source['stId']] = source
-            nodes[target['stId']] = target
-            edges.append((source['stId'], target['stId'], relationship))
+            source['bipartite'] = (
+                EVENT if 'Event' in record['source']['labels']
+                else ENTITY)
+
+            if relationship['type'] == 'referenceEntity':
+                source['referenceEntity'] = target
+                nodes[source['stId']] = source
+            else:
+                target['bipartite'] = (
+                    EVENT if 'Event' in record['target']['labels']
+                    else ENTITY)
+
+                nodes[source['stId']] = source
+                nodes[target['stId']] = target
+                edges.append((source['stId'], target['stId'], relationship))
 
         pathways, compartments = {}, {}
         for record in result_pathways:
