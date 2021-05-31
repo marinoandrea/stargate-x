@@ -13,7 +13,7 @@ return
 union
 
 match 
-    (a:Entity),
+    (a:PhysicalEntity),
     (a)-[:species]->(s:Species),
     (a)-[r:referenceEntity]->(b),
     (b:ReferenceEntity)
