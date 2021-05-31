@@ -2,7 +2,7 @@
 
 The package is a python implementation of a bipartite directed multigraph extracted from the Reactome database. Its underlying implementation uses `networkx`.
 
-The graph represents **reactions** and **physical entities** as nodes, edges are classified into 5 categories:
+The graph represents **reactions** and **physical entities** as nodes. Edges are instead classified into 5 categories:
 
 - input
 - output
@@ -17,7 +17,7 @@ The package provides a wrapper for the `networkx.MultiDiGraph` class: the `React
 
 > NOTE: the user may prefer the latter option in order to control which specific version of Reactome’s database is used to generate the graphs. The latest supported version for this package will be periodically updated.
 
-When building from a Neo4j instance, the package extracts data from the [Reactome graph database](https://reactome.org/download-data) and produces a _bipartite directed multi-graph_.
+When building from a Neo4j instance, the package extracts data from the [Reactome graph database](https://reactome.org/download-data).
 
 ## Installation
 
@@ -29,7 +29,7 @@ pip install .
 
 ## Usage
 
-In order to use the pre-built graphs, just call the `load` method specifying the species:
+In order to use the pre-built graphs, just call the `load` method passing the species as an argument:
 
 ```python
 from reactome_graph import ReactomeGraph, Species
@@ -39,7 +39,7 @@ hsa_graph = ReactomeGraph.load('Homo sapiens')
 hsa_graph = ReactomeGraph.load(Species.HSA)
 ```
 
-In order to build a graph directly from Reactome's Neo4j database, an active Neo4j instance hosting the Reactome database is required.
+In order to build a graph directly from Reactome's database, an active Neo4j instance is required.
 The connection URI can be specified in the `options` (it defaults to `bolt://localhost:7687`):
 
 ```python
@@ -57,8 +57,6 @@ hsa_graph = ReactomeGraph.build(Species.HSA, options={'neo4j_uri': 'bolt://<YOUR
 
 Represents a graph for a certain species.
 
-#### Properties:
-
 | PROPERTY             | TYPE                    | DESCRIPTION                                                |
 | -------------------- | ----------------------- | ---------------------------------------------------------- |
 | `event_nodes`        | `Set[str]`              | Set containing all the event nodes identifiers.            |
@@ -67,7 +65,7 @@ Represents a graph for a certain species.
 | `pathways`           | `Iterable[Pathway]`     | List of all pathways for this graph instance.              |
 | `top_level_pathways` | `Iterable[Pathway]`     | List of all top level pathways for this graph instance.    |
 
-#### Methods:
+---
 
 | METHOD                     | ARGUMENTS                                                       | RETURNS       | DESCRIPTION                                                                                          |
 | -------------------------- | --------------------------------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------- |
@@ -78,13 +76,11 @@ Represents a graph for a certain species.
 
 ### Species
 
-Enumeration with valid Reactome species ([source](reactome_graph/species.py)).
+Enumeration with valid Reactome species ([source](https://github.com/marinoandrea/reactome-graph/blob/master/reactome_graph/species.py)).
 
 ### Pathway
 
 Dataclass containing basic pathway information.
-
-#### Properties:
 
 | PROPERTY       | TYPE   | DESCRIPTION                                 |
 | -------------- | ------ | ------------------------------------------- |
@@ -96,8 +92,6 @@ Dataclass containing basic pathway information.
 ### Compartment
 
 Dataclass containing basic cellulare compartment information.
-
-#### Properties:
 
 | PROPERTY | TYPE  | DESCRIPTION                                      |
 | -------- | ----- | ------------------------------------------------ |
