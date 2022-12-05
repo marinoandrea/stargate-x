@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "stargate-x"
+version = "1.1.0"
+description = "Python implementation of a bipartite directed multigraph extracted from the Reactome database."
+authors = ["Andrea Marino <am.marinoandrea@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "stargate_x"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+networkx = "^2.8.8"
+neo4j = "^5.3.0"
+
+[tool.poetry.group.dev.dependencies]
+autopep8 = "^2.0.0"
+flake8 = "^6.0.0"
+mypy = "^0.991"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
