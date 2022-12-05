@@ -1,4 +1,6 @@
-# Reactome-graph
+# Stargate-X
+
+[![DOI](https://zenodo.org/badge/281791887.svg)](https://zenodo.org/badge/latestdoi/281791887)
 
 The package is a python implementation of a bipartite directed multigraph extracted from the Reactome database. Its underlying implementation uses `networkx`.
 
