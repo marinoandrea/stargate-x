@@ -6,13 +6,12 @@ from typing import Callable, Iterable, List, Set, Union
 
 import networkx as nx
 
-from reactome_graph.constants import (COMPARTMENTS_QUERY, DATA_FOLDER,
-                                      EDGES_QUERY, ENTITY, EVENT,
-                                      PATHWAYS_QUERY, PKG_NAME)
-from reactome_graph.data import Compartment, Pathway
-from reactome_graph.neo4j import Neo4jClient
-from reactome_graph.species import Species
-from reactome_graph.utils import cached
+from stargate_x.constants import (COMPARTMENTS_QUERY, DATA_FOLDER, EDGES_QUERY,
+                                  ENTITY, EVENT, PATHWAYS_QUERY, PKG_NAME)
+from stargate_x.data import Compartment, Pathway
+from stargate_x.neo4j import Neo4jClient
+from stargate_x.species import Species
+from stargate_x.utils import cached
 
 
 class ReactomeGraph(nx.MultiDiGraph):

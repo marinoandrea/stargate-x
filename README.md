@@ -32,7 +32,7 @@ pip install .
 In order to use the pre-built graphs, just call the `load` method passing the species as an argument:
 
 ```python
-from reactome_graph import ReactomeGraph, Species
+from stargate_x import ReactomeGraph, Species
 
 hsa_graph = ReactomeGraph.load('Homo sapiens')
 # or
@@ -43,7 +43,7 @@ In order to build a graph directly from Reactome's database, an active Neo4j ins
 The connection URI can be specified in the `options` (it defaults to `bolt://localhost:7687`):
 
 ```python
-from reactome_graph import ReactomeGraph, Species
+from stargate_x import ReactomeGraph, Species
 
 hsa_graph = ReactomeGraph.build('Homo sapiens', options={'neo4j_uri': 'bolt://<YOUR_HOST>:<YOUR_PORT>'})
 # or
@@ -76,7 +76,7 @@ Represents a graph for a certain species.
 
 ### Species
 
-Enumeration with valid Reactome species ([source](https://github.com/marinoandrea/reactome-graph/blob/master/reactome_graph/species.py)).
+Enumeration with valid Reactome species ([source](https://github.com/marinoandrea/reactome-graph/blob/master/stargate_x/species.py)).
 
 ### Pathway
 
@@ -103,7 +103,7 @@ Dataclass containing basic cellulare compartment information.
 Obtain a subgraph relative to a specific pathway:
 
 ```python
-from reactome_graph import ReactomeGraph
+from stargate_x import ReactomeGraph
 
 hsa_graph = ReactomeGraph.load('Homo sapiens')
 signal_transduction_subgraph = hsa_graph.get_pathway_subgraph('R-HSA-162582')
@@ -112,7 +112,7 @@ signal_transduction_subgraph = hsa_graph.get_pathway_subgraph('R-HSA-162582')
 or to a specific cellular compartment:
 
 ```python
-from reactome_graph import ReactomeGraph
+from stargate_x import ReactomeGraph
 
 hsa_graph = ReactomeGraph.load('Homo sapiens')
 plasma_membrane_subgraph = hsa_graph.get_compartment_subgraph('GO:0005886')
