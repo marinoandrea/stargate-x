@@ -1,6 +1,7 @@
 import io
 import pickle
 import pkgutil
+from functools import lru_cache
 from multiprocessing.pool import ThreadPool
 from typing import Callable, Iterable, List, Set, Union
 
@@ -11,7 +12,6 @@ from stargate_x.constants import (COMPARTMENTS_QUERY, DATA_FOLDER, EDGES_QUERY,
 from stargate_x.data import Compartment, Pathway
 from stargate_x.neo4j import Neo4jClient
 from stargate_x.species import Species
-from stargate_x.utils import cached
 
 
 class ReactomeGraph(nx.MultiDiGraph):
@@ -144,7 +144,7 @@ class ReactomeGraph(nx.MultiDiGraph):
         """
         s_name = species.value if isinstance(species, Species) else species
 
-        @cached
+        @lru_cache
         def load_query(path: str, species: str) -> str:
             data = pkgutil.get_data(PKG_NAME, path)
             if data is None:
