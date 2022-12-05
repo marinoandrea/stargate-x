@@ -1,10 +1,10 @@
 from distutils.core import setup
 
-VERSION = '2.0.0'
+VERSION = '1.1.0'
 
 setup(
-    name='reactome-graph',
-    packages=['reactome_graph'],
+    name='stargate-x',
+    packages=['stargate_x'],
     version=VERSION,
     description=(
         '''
@@ -15,15 +15,15 @@ setup(
     ),
     author='Andrea Marino',
     author_email='am.marinoandrea@gmail.com',
-    url='https://github.com/marinoandrea/reactome-graph',
+    url='https://github.com/marinoandrea/stargate-x',
     download_url=(
-        f'https://github.com/marinoandrea/reactome-graph/tarball/{VERSION}'
+        f'https://github.com/marinoandrea/stargate-x/tarball/{VERSION}'
     ),
     keywords=['reactome', 'pathway', 'pathways', 'graph', 'bipartite'],
     install_requires=['networkx', 'neo4j'],
     include_package_data=True,
     package_data={
-        'reactome_graph': [
+        'stargate_x': [
             'data/*.pickle',
             'queries/*.cypher'
         ],
