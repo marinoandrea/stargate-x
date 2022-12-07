@@ -146,7 +146,8 @@ import networkx as nx
 import stargate_x as sx
 
 # select the cytosol compartment subgraph in the nucleotides metabolism pathway
-cytosol_nucleotides_metabolism_subgraph = hsa_graph\
+cytosol_nucleotides_metabolism_subgraph = sx.ReactomeGraph\
+    .load("Homo sapiens")\
     .get_pathway_subgraph("R-HSA-15869")\
     .get_compartment_subgraph("GO:0005829")
 
