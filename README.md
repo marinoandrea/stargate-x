@@ -127,10 +127,9 @@ import networkx as nx
 
 import stargate_x as sx
 
-hsa_graph = sx.ReactomeGraph.load("Homo sapiens")
-
-# select a specific pathway subgraph
-signal_transduction_subgraph = hsa_graph.get_pathway_subgraph('R-HSA-162582')
+signal_transduction_subgraph = sx.ReactomeGraph\
+    .load("Homo sapiens")
+    .get_pathway_subgraph("R-HSA-162582")
 
 # calculate different centrality measures for every node in the subgraph
 lapl = sx.laplacian_centrality(signal_transduction_subgraph, deg_type="out_degree")
@@ -153,7 +152,20 @@ cytosol_nucleotides_metabolism_subgraph = sx.ReactomeGraph\
 
 # find all nodes reachable from ATP using standard networkx functionalities
 reachable_nodes_from_atp = nx.descendants(cytosol_nucleotides_metabolism_subgraph, "R-ALL-113592")
+```
 
+Here is an example of how to obtain participating compounds given a reaction node:
+
+```python
+import stargate_x as sx
+
+signal_transduction_graph = sx.ReactomeGraph\
+    .load("Homo sapiens")
+    .get_pathway_subgraph("R-HSA-162582")
+
+# find all compounds participating in the Phosphorylation of complexed TSC2 by PKB
+# within the Signal Transduction top-level pathway
+compounds = signal_transduction_graph.neighbors("R-HSA-165182")
 ```
 
 ## Authors
