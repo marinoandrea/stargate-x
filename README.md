@@ -120,6 +120,41 @@ hsa_graph = ReactomeGraph.load('Homo sapiens')
 plasma_membrane_subgraph = hsa_graph.get_compartment_subgraph('GO:0005886')
 ```
 
+Here is an example where we obtain centrality measures for all nodes in a specific pathway:
+
+```python
+import networkx as nx
+
+import stargate_x as sx
+
+hsa_graph = sx.ReactomeGraph.load("Homo sapiens")
+
+# select a specific pathway subgraph
+signal_transduction_subgraph = hsa_graph.get_pathway_subgraph('R-HSA-162582')
+
+# calculate different centrality measures for every node in the subgraph
+lapl = sx.laplacian_centrality(signal_transduction_subgraph, deg_type="out_degree")
+hidx = sx.h_index_centrality(signal_transduction_subgraph, deg_type="out_degree")
+levr = sx.leverage_centrality(signal_transduction_subgraph, deg_type="out_degree")
+```
+
+Here is an example where we analyze the connectivity features of a single node in a specific compartment and pathway:
+
+```python
+import networkx as nx
+
+import stargate_x as sx
+
+# select the cytosol compartment subgraph in the nucleotides metabolism pathway
+cytosol_nucleotides_metabolism_subgraph = hsa_graph\
+    .get_pathway_subgraph("R-HSA-15869")\
+    .get_compartment_subgraph("GO:0005829")
+
+# find all nodes reachable from ATP using standard networkx functionalities
+reachable_nodes_from_atp = nx.descendants(cytosol_nucleotides_metabolism_subgraph, "R-ALL-113592")
+
+```
+
 ## Authors
 
 - **Andrea Marino** - ([marinoandrea](https://github.com/marinoandrea))
