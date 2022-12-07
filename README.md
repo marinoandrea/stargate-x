@@ -161,7 +161,7 @@ import stargate_x as sx
 
 signal_transduction_graph = sx.ReactomeGraph\
     .load("Homo sapiens")
-    .get_pathway_subgraph("R-HSA-162582")
+    .get_pathway_subgraph("R-HSA-9709957")
 
 # find all compounds participating in the Phosphorylation of complexed TSC2 by PKB
 # within the Signal Transduction top-level pathway
