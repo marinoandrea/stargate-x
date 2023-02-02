@@ -24,8 +24,8 @@ When building from a Neo4j instance, the package extracts data from the [Reactom
 ## Installation
 
 ```bash
-git clone https://github.com/marinoandrea/reactome-graph.git
-cd reactome-graph
+git clone https://github.com/marinoandrea/stargate-x.git
+cd stargate-x
 pip install .
 ```
 
